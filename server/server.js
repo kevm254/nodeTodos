@@ -5,13 +5,18 @@ const _ = require('lodash');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
 
-let { mongoose } = require('./db/mongoose');
+require('./db/mongoose');
+
 let { Todo } = require('./db/models/todo');
 let { User } = require('./db/models/user');
 
 let port = process.env.PORT;
 
 app.use(bodyParser.json());
+
+app.get('/', (req, res) => {
+   res.send('hi there');
+});
 
 app.get('/todos', (req, res) => {
    Todo.find().then((todos) => {
@@ -42,7 +47,6 @@ app.get('/todos/:id', (req, res) => {
     if (!ObjectID.isValid(id)) {
         return res.status(404).send("We didn't find what you were looking for.")
     }
-
 
 
    User.findById(req.params['id'])
@@ -104,9 +108,27 @@ app.patch('/todos/:id', (req, res) => {
 });
 
 
+// POST / users
+app.post('/users', (req, res) => {
+   let body = _.pick(req.body, ['email', 'password']);
+   let user = new User(body);
+
+
+   user.save()
+       .then((user) => {
+           return user.generateAuthToken();
+       })
+       .then((token) => {
+            res.header('x-auth', token).send(user);
+       })
+       .catch((e) => {
+           res.status(400).send(e);
+       })
+});
+
+
 app.listen(port, () => {
     console.log('Listening on port: ', port);
 });
-
 
 module.exports = { app };
