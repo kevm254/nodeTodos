@@ -8,5 +8,3 @@ let data = {
 
 let token = jwt.sign(data, 'supersecret');
 let decodedResults = jwt.verify(token, 'supersecret');
-console.log(token);
-console.log(decodedResults);
