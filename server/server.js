@@ -1,4 +1,5 @@
 require('./config/config');
+require('./db/mongoose');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -7,15 +8,15 @@ const userRoutes = require('./routes/user-routes').router;
 
 const { ObjectID } = require('mongodb');
 
-require('./db/mongoose');
 
 
 let port = process.env.PORT;
 
+// Middleware
 app.use(bodyParser.json());
 
+// Routes
 app.use('/todos', todoRoutes);
-
 app.use('/users', userRoutes);
 app.get('/', (req, res) => {
    res.send('hi there');

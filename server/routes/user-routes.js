@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
+const { authenticate } = require('./../middleware/authenticate');
+
 let { User } = require('../db/models/user');
 
 
@@ -22,20 +24,8 @@ router.post('/', (req, res) => {
 });
 
 
-router.get('/me', (req, res) => {
-    let token = req.header('x-auth');
-
-    console.log(token);
-    res.send(token);
-    // User.findByToken(token)
-    //     .then((user) => {
-    //     if (!user) {
-    //
-    //     }
-    //
-    //     res.send(user);
-    //     });
-
+router.get('/me', authenticate, (req, res) => {
+    res.send(req.user);
 });
 
-module.exports = { router }
+module.exports = { router };
